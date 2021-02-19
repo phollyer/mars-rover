@@ -16,5 +16,5 @@ main =
 
 
 init : String -> ( World, Cmd msg )
-init _ =
-    ( World.init, Cmd.none )
+init input =
+    ( World.init input, Cmd.none )
