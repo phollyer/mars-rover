@@ -6149,18 +6149,17 @@ var $author$project$World$output = function (roverResult) {
 	}
 };
 var $author$project$World$moveRovers = function (world) {
+	var rovers = A2(
+		$elm$core$List$map,
+		$author$project$World$moveRover(world),
+		world.rovers);
+	var _v0 = A2(
+		$elm$core$List$map,
+		$author$project$World$output,
+		$elm$core$List$reverse(rovers));
 	return _Utils_update(
 		world,
-		{
-			rovers: A2(
-				$elm$core$List$map,
-				$author$project$World$output,
-				$elm$core$List$reverse(
-					A2(
-						$elm$core$List$map,
-						$author$project$World$moveRover(world),
-						world.rovers)))
-		});
+		{rovers: rovers});
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);

@@ -72,12 +72,15 @@ init input =
 
 moveRovers : World -> World
 moveRovers world =
-    { world
-        | rovers =
+    let
+        rovers =
             List.map (moveRover world) world.rovers
-                |> List.reverse
+
+        _ =
+            List.reverse rovers
                 |> List.map output
-    }
+    in
+    { world | rovers = rovers }
 
 
 output : Result Error Rover -> Result Error Rover
