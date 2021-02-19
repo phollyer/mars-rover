@@ -17,4 +17,7 @@ main =
 
 init : String -> ( World, Cmd msg )
 init input =
-    ( World.init input, Cmd.none )
+    ( World.init input
+        |> World.moveRovers
+    , Cmd.none
+    )
