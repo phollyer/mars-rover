@@ -5353,7 +5353,7 @@ var $elm$parser$Parser$run = F2(
 		}
 	});
 var $author$project$World$World = F3(
-	function (rows, columns, rovers) {
+	function (rovers, rows, columns) {
 		return {columns: columns, rovers: rovers, rows: rows};
 	});
 var $elm$core$Basics$always = F2(
@@ -5667,9 +5667,9 @@ var $author$project$World$worldParser = A2(
 		A2(
 			$elm$parser$Parser$keeper,
 			$elm$parser$Parser$succeed($author$project$World$World),
-			A2($elm$parser$Parser$ignorer, $elm$parser$Parser$int, $elm$parser$Parser$spaces)),
-		$elm$parser$Parser$int),
-	$elm$parser$Parser$succeed(_List_Nil));
+			$elm$parser$Parser$succeed(_List_Nil)),
+		A2($elm$parser$Parser$ignorer, $elm$parser$Parser$int, $elm$parser$Parser$spaces)),
+	$elm$parser$Parser$int);
 var $author$project$World$parse = A2(
 	$elm$core$Basics$composeR,
 	$elm$parser$Parser$run($author$project$World$worldParser),
@@ -5937,6 +5937,35 @@ var $author$project$World$init = function (input) {
 		return {columns: 0, rovers: _List_Nil, rows: 0};
 	}
 };
+var $author$project$World$errorToString = function (error) {
+	switch (error.$) {
+		case 'InvalidWorld':
+			return 'Invalid World';
+		case 'InvalidRover':
+			return 'Invalid Rover';
+		default:
+			return 'Invalid Instruction to Rover';
+	}
+};
+var $elm$core$Debug$log = _Debug_log;
+var $author$project$World$log = function (roverResult) {
+	if (roverResult.$ === 'Ok') {
+		var rover = roverResult.a;
+		var log_ = '(' + ($elm$core$String$fromInt(rover.x) + (', ' + ($elm$core$String$fromInt(rover.y) + (', ' + (rover.orientation + ')')))));
+		var _v1 = A2(
+			$elm$core$Debug$log,
+			'',
+			_Utils_eq(rover.state, $author$project$World$Lost) ? (log_ + ' Lost') : log_);
+		return $elm$core$Result$Ok(rover);
+	} else {
+		var e = roverResult.a;
+		var _v2 = A2(
+			$elm$core$Debug$log,
+			'',
+			$author$project$World$errorToString(e));
+		return $elm$core$Result$Err(e);
+	}
+};
 var $author$project$World$Done = {$: 'Done'};
 var $author$project$World$canMoveForward = F3(
 	function (rows, columns, rover) {
@@ -6133,21 +6162,6 @@ var $author$project$World$nextInstruction = F2(
 			return $elm$core$Result$Err(e);
 		}
 	});
-var $elm$core$Debug$log = _Debug_log;
-var $author$project$World$output = function (roverResult) {
-	if (roverResult.$ === 'Ok') {
-		var rover = roverResult.a;
-		var log = '(' + ($elm$core$String$fromInt(rover.x) + (', ' + ($elm$core$String$fromInt(rover.y) + (', ' + (rover.orientation + ')')))));
-		var _v1 = A2(
-			$elm$core$Debug$log,
-			'',
-			_Utils_eq(rover.state, $author$project$World$Lost) ? (log + ' Lost') : log);
-		return $elm$core$Result$Ok(rover);
-	} else {
-		var e = roverResult.a;
-		return $elm$core$Result$Err(e);
-	}
-};
 var $author$project$World$moveRovers = function (world) {
 	var rovers = A2(
 		$elm$core$List$map,
@@ -6155,7 +6169,7 @@ var $author$project$World$moveRovers = function (world) {
 		world.rovers);
 	var _v0 = A2(
 		$elm$core$List$map,
-		$author$project$World$output,
+		$author$project$World$log,
 		$elm$core$List$reverse(rovers));
 	return _Utils_update(
 		world,

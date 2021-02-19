@@ -13,9 +13,9 @@ import Parser exposing ((|.), (|=), Parser)
 
 
 type alias World =
-    { rows : Int
+    { rovers : List (Result Error Rover)
+    , rows : Int
     , columns : Int
-    , rovers : List (Result Error Rover)
     }
 
 
@@ -78,31 +78,9 @@ moveRovers world =
 
         _ =
             List.reverse rovers
-                |> List.map output
+                |> List.map log
     in
     { world | rovers = rovers }
-
-
-output : Result Error Rover -> Result Error Rover
-output roverResult =
-    case roverResult of
-        Ok rover ->
-            let
-                log =
-                    "(" ++ String.fromInt rover.x ++ ", " ++ String.fromInt rover.y ++ ", " ++ rover.orientation ++ ")"
-
-                _ =
-                    Debug.log "" <|
-                        if rover.state == Lost then
-                            log ++ " Lost"
-
-                        else
-                            log
-            in
-            Ok rover
-
-        Err e ->
-            Err e
 
 
 moveRover : World -> Result Error Rover -> Result Error Rover
@@ -279,6 +257,23 @@ canMoveForward rows columns rover =
 
 
 
+{- Transform -}
+
+
+errorToString : Error -> String
+errorToString error =
+    case error of
+        InvalidWorld ->
+            "Invalid World"
+
+        InvalidRover ->
+            "Invalid Rover"
+
+        InvalidInstruction ->
+            "Invalid Instruction to Rover"
+
+
+
 {- Parsers -}
 
 
@@ -292,10 +287,10 @@ worldParser : Parser World
 worldParser =
     Parser.succeed
         World
+        |= Parser.succeed []
         |= Parser.int
         |. Parser.spaces
         |= Parser.int
-        |= Parser.succeed []
 
 
 parseRovers : List String -> List (Result Error Rover)
@@ -331,3 +326,33 @@ roverParser =
                 |> Parser.getChompedString
            )
         |= Parser.succeed Initial
+
+
+
+{- Logging -}
+
+
+log : Result Error Rover -> Result Error Rover
+log roverResult =
+    case roverResult of
+        Ok rover ->
+            let
+                log_ =
+                    "(" ++ String.fromInt rover.x ++ ", " ++ String.fromInt rover.y ++ ", " ++ rover.orientation ++ ")"
+
+                _ =
+                    Debug.log "" <|
+                        if rover.state == Lost then
+                            log_ ++ " Lost"
+
+                        else
+                            log_
+            in
+            Ok rover
+
+        Err e ->
+            let
+                _ =
+                    Debug.log "" (errorToString e)
+            in
+            Err e
