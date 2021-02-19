@@ -2,9 +2,10 @@ module Main exposing (main)
 
 import Browser
 import Html
+import World exposing (World)
 
 
-main : Program String String msg
+main : Program String World msg
 main =
     Browser.element
         { init = init
@@ -14,6 +15,6 @@ main =
         }
 
 
-init : String -> ( String, Cmd msg )
-init input =
-    ( input, Cmd.none )
+init : String -> ( World, Cmd msg )
+init _ =
+    ( World.init, Cmd.none )
