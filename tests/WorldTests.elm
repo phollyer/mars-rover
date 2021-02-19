@@ -16,7 +16,10 @@ world =
 
 input : String
 input =
-    "4 8"
+    """4 8
+    (0, 2, N) FFLFRFF
+    (2, 3, E) LFRFF
+    """
 
 
 suite : Test
@@ -30,6 +33,20 @@ suite =
                             { world
                                 | rows = 4
                                 , columns = 8
+                                , rovers =
+                                    [ Ok
+                                        { x = 0
+                                        , y = 2
+                                        , orientation = "N"
+                                        , instructions = "FFLFRFF"
+                                        }
+                                    , Ok
+                                        { x = 2
+                                        , y = 3
+                                        , orientation = "E"
+                                        , instructions = "LFRFF"
+                                        }
+                                    ]
                             }
             ]
         ]
